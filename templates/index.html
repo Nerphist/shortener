@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script>
+        function sendUrl() {
+            let urlInput = document.getElementById('send-url');
+            let urlString = urlInput.value;
+            let postRequest = $.post("shorten/", {'url': urlString});
+            postRequest.done(function (data) {
+                let dict = JSON.parse(data);
+                if (dict.created) {
+                    urlInput.value = dict.url;
+                } else {
+                    urlInput.value = dict.url + '     Clicks count: ' + dict.clicks.toString();
+                }
+            });
+            postRequest.fail(function (xhr, status, error) {
+                if (error === 'Bad Request') {
+                    urlInput.value = urlInput.value + ' is not a valid url';
+                }
+            })
+            return false
+        }
+    </script>
+    <style>
+        ul {
+            list-style-type: none;
+            overflow: hidden;
+        }
+
+        li {
+            float: right;
+        }
+
+        li a {
+            color: #000;
+            display: block;
+            text-align: center;
+            padding: 10px 10px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+
+        .bar {
+            margin: 0 auto;
+            width: 575px;
+            border-radius: 30px;
+            border: 1px solid #dcdcdc;
+        }
+
+        .bar:hover {
+            box-shadow: 1px 1px 8px 1px #dcdcdc;
+        }
+
+        .bar:focus-within {
+            box-shadow: 1px 1px 8px 1px #dcdcdc;
+            outline: none;
+        }
+
+        .searchbar {
+            height: 45px;
+            border: none;
+            width: 500px;
+            font-size: 16px;
+            outline: none;
+
+        }
+
+        .container {
+            text-align: center;
+            padding-top: 200px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <form class="bar" onsubmit="return sendUrl()">
+        <input class="searchbar" id="send-url" type="text" title="Search">
+    </form>
+</div>
+</body>
+</html>
